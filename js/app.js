@@ -8,6 +8,15 @@ cargarEventListeners();
 function cargarEventListeners() {
   //Agregar curso al carrito.
   listaCursos.addEventListener('click', agregarCurso)
+  
+  //Elimina cursos del carrito.
+  carrito.addEventListener('click', eliminarCurso)
+
+  //Vaciar carrito de compras.
+  vaciarCarritoBtn.addEventListener('click', ()=> {
+    articulosCarrito = [];
+    carritoHTML();
+  })
 };
 
 //Funciones:
@@ -18,8 +27,27 @@ function agregarCurso(e) {
     readDocument(cursoSeleccionado);
   }
 }
+function eliminarCurso(e) {
+  e.preventDefault();
+  if ( e.target.classList.contains('borrar-curso') ) {
+    const cursoId = e.target.getAttribute('data-id');
+    const cursoEnCarrito = articulosCarrito.find( curso => curso.id === cursoId);
+    if (cursoEnCarrito) {
+      // Verifica la cantidad del curso en el carrito
+      if (cursoEnCarrito.cantidad > 1) {
+        // Reduce la cantidad si es mayor a 1
+        cursoEnCarrito.cantidad--;
+      } else {
+        // Elimina el curso del carrito si la cantidad es 1
+        articulosCarrito = articulosCarrito.filter((curso) => curso.id !== cursoId);
+      }
 
-//Leemos el contenido del html al que dimos click y extrae la info del curso.
+      // Actualiza la interfaz.
+      carritoHTML();
+    }
+  }
+}
+  //Leemos el contenido del html al que dimos click y extrae la info del curso.
 
 function readDocument(curso) {
   //Creamos un objeto con el contenido del curso actual.
@@ -31,9 +59,24 @@ function readDocument(curso) {
     cantidad: 1,
   }
 
-  //Agrega elementos al arreglo del carrito.
-  articulosCarrito =[...articulosCarrito, infoCurso]
-  console.log(articulosCarrito);
+  //Revisa si un elemento ya esta en el carrito.
+  const existe = articulosCarrito.some( curso => curso.id === infoCurso.id )
+  if (existe) {
+    //Actualizamos la cantidad.
+    const cursos = articulosCarrito.map( curso => {
+      if ( curso.id === infoCurso.id ) {
+        curso.cantidad++
+        return curso
+      } else {
+        return curso
+      }
+    })
+    articulosCarrito = [...cursos]
+  } else {
+    //Agrega elementos al arreglo del carrito.
+    articulosCarrito =[...articulosCarrito, infoCurso]
+  }
+
   carritoHTML();
 }
 
@@ -67,6 +110,5 @@ function carritoHTML() {
     while ( contenedorCarrito.firstChild ) {
       contenedorCarrito.removeChild(contenedorCarrito.firstChild);
     }
-
   }
 }
