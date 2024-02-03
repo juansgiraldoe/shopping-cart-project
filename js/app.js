@@ -17,3 +17,17 @@ function agregarCurso(e) {
     readDocument(cursoSeleccionado);
   }
 }
+
+//Leemos el contenido del html al que dimos click y extrae la info del curso.
+
+function readDocument(curso) {
+  //Creamos un objeto con el contenido del curso actual.
+  infoCurso = {
+    imagen: curso.querySelector('img').src,
+    titulo: curso.querySelector('h4').textContent,
+    precio: curso.querySelector('.precio .u-pull-right').textContent,
+    id: curso.querySelector('a').getAttribute('data-id'),
+    cantidad: 1,
+  }
+  console.log(infoCurso);
+}
